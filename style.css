@@ -44,6 +44,12 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
+/* Kunci lebar tiap card Hall of Fame di semua ukuran layar,
+   biar nggak ambigu/ngebug di browser Android (nested flex issue) */
+#hall-of-fame-scroller .snap-center {
+    flex: 0 0 auto;
+}
+
 /* Semua gambar/video nggak boleh lebih lebar dari layar */
 img, video {
     max-width: 100%;
@@ -89,18 +95,23 @@ img, video {
         gap: 1.5rem;
     }
 
-    /* Hall of Fame card lebih lebar di layar kecil biar kebaca */
+    /* Hall of Fame card: pakai vw (bukan %) biar nggak relatif ke parent
+       flex yang lebarnya ambigu -> ini penyebab bug kegedean di Android */
     #hall-of-fame-scroller .snap-center {
-        width: 88%;
+        width: 85vw;
+        max-width: 340px;
     }
 
     /* Pakai aspect-ratio (bukan height tetap) biar foto nggak kepotong/gepeng
-       walaupun rasio asli tiap foto beda-beda */
+       walaupun rasio asli tiap foto beda-beda.
+       max-height jadi jaring pengaman buat browser Android lama yang
+       belum support aspect-ratio dengan baik. */
     #hall-of-fame-scroller img {
         width: 100%;
         height: auto;
         aspect-ratio: 4 / 5;
         object-fit: cover;
+        max-height: 420px;
     }
 
     /* Tombol scroll kiri/kanan disembunyikan di HP (swipe lebih natural) */
@@ -133,6 +144,11 @@ img, video {
 
     section h2.font-anime {
         font-size: 1.75rem;
+    }
+
+    #hall-of-fame-scroller .snap-center {
+        width: 82vw;
+        max-width: 300px;
     }
 
     #lightgallery {
