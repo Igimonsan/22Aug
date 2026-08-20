@@ -91,11 +91,16 @@ img, video {
 
     /* Hall of Fame card lebih lebar di layar kecil biar kebaca */
     #hall-of-fame-scroller .snap-center {
-        width: 85%;
+        width: 88%;
     }
 
+    /* Pakai aspect-ratio (bukan height tetap) biar foto nggak kepotong/gepeng
+       walaupun rasio asli tiap foto beda-beda */
     #hall-of-fame-scroller img {
-        height: 14rem;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
     }
 
     /* Tombol scroll kiri/kanan disembunyikan di HP (swipe lebih natural) */
