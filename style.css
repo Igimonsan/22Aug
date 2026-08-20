@@ -3,16 +3,22 @@ body {
     font-family: 'Poppins', sans-serif;
     background-color: #F0F8FF; /* Alice Blue - a very light sky blue */
     color: #2c3e50; /* Dark Navy/Slate */
+    overflow-x: hidden; /* cegah scroll horizontal di HP */
+    -webkit-text-size-adjust: 100%; /* cegah font auto-zoom di iOS */
 }
+
 .font-anime {
     font-family: 'Mochiy Pop One', sans-serif;
 }
+
 .text-sakura {
     color: #FFB7C5; /* Cherry Blossom Pink */
 }
+
 .bg-navy {
     background-color: #2c3e50;
 }
+
 /* Style for the falling petals canvas */
 #sakura-canvas {
     position: fixed;
@@ -23,6 +29,7 @@ body {
     z-index: 5;
     pointer-events: none; /* Allows clicks to go through the canvas */
 }
+
 /* For hiding the scrollbar */
 .scrollbar-hide::-webkit-scrollbar {
     display: none;
@@ -32,37 +39,102 @@ body {
     scrollbar-width: none;  /* Firefox */
 }
 
-/* Custom styles for our Anime Theme */
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #F0F8FF; /* Alice Blue - a very light sky blue */
-    color: #2c3e50; /* Dark Navy/Slate */
-}
-.font-anime {
-    font-family: 'Mochiy Pop One', sans-serif;
-}
-.text-sakura {
-    color: #FFB7C5; /* Cherry Blossom Pink */
-}
-.bg-navy {
-    background-color: #2c3e50;
-}
-/* Style for the falling petals canvas */
-#sakura-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 5;
-    pointer-events: none; /* Allows clicks to go through the canvas */
-}
-/* For hiding the scrollbar */
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-.scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+/* Hall of Fame scroller: bikin swipe di HP lebih smooth */
+#hall-of-fame-scroller {
+    -webkit-overflow-scrolling: touch;
 }
 
+/* Semua gambar/video nggak boleh lebih lebar dari layar */
+img, video {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ============================= */
+/* MOBILE RESPONSIVE ADJUSTMENTS */
+/* ============================= */
+
+/* Tablet & HP besar */
+@media (max-width: 768px) {
+    header {
+        height: 100svh; /* pakai small viewport height biar pas di HP (address bar tidak ganggu) */
+    }
+
+    h1.font-anime {
+        font-size: 2.5rem; /* turunin dari text-7xl biar nggak overflow */
+        line-height: 1.15;
+    }
+
+    #countdown {
+        font-size: 1.15rem;
+        letter-spacing: 0.05em;
+    }
+
+    section h2.font-anime {
+        font-size: 2.25rem;
+    }
+
+    main {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Surat/pesan biar nggak terlalu padat di HP */
+    section .bg-white.p-8 {
+        padding: 1.5rem;
+    }
+
+    /* Timeline: pastikan foto & teks stack rapi + gap lebih kecil */
+    section .space-y-16 > div {
+        gap: 1.5rem;
+    }
+
+    /* Hall of Fame card lebih lebar di layar kecil biar kebaca */
+    #hall-of-fame-scroller .snap-center {
+        width: 85%;
+    }
+
+    #hall-of-fame-scroller img {
+        height: 14rem;
+    }
+
+    /* Tombol scroll kiri/kanan disembunyikan di HP (swipe lebih natural) */
+    #scroll-left-btn,
+    #scroll-right-btn {
+        display: none;
+    }
+
+    /* Gallery jadi 2 kolom tetap tapi jarak dikecilkan */
+    #lightgallery {
+        gap: 0.5rem;
+    }
+    #lightgallery a {
+        height: 9rem;
+    }
+
+    /* Tombol musik jangan ketutup notch/gesture bar HP */
+    #music-toggle-btn {
+        bottom: env(safe-area-inset-bottom, 1rem);
+        right: env(safe-area-inset-right, 1rem);
+        padding: 0.65rem;
+    }
+}
+
+/* HP kecil (contoh: iPhone SE, layar < 380px) */
+@media (max-width: 380px) {
+    h1.font-anime {
+        font-size: 2rem;
+    }
+
+    section h2.font-anime {
+        font-size: 1.75rem;
+    }
+
+    #lightgallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #lightgallery a {
+        height: 7.5rem;
+    }
+}
