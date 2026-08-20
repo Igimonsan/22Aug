@@ -98,30 +98,62 @@ document.addEventListener('DOMContentLoaded', function() {
             musicIconOff.classList.remove('hidden');
         }
 
-        function tryPlayMusic() {
-            const playPromise = bgMusic.play();
-            if (playPromise !== undefined) {
-                playPromise.then(() => {
-                    showPlayingIcon();
-                }).catch(() => {
-                    // Autoplay blocked by browser — wait for first user interaction
-                    showPausedIcon();
-                    const startOnInteraction = () => {
-                        bgMusic.play().then(showPlayingIcon).catch(() => {});
-                        document.removeEventListener('click', startOnInteraction);
-                        document.removeEventListener('touchstart', startOnInteraction);
-                        document.removeEventListener('scroll', startOnInteraction);
-                        document.removeEventListener('keydown', startOnInteraction);
-                    };
-                    document.addEventListener('click', startOnInteraction, { once: true });
-                    document.addEventListener('touchstart', startOnInteraction, { once: true });
-                    document.addEventListener('scroll', startOnInteraction, { once: true });
-                    document.addEventListener('keydown', startOnInteraction, { once: true });
-                });
-            }
+        // --- Pastikan musik sudah ke-load (buffer cukup) sebelum dicoba di-play ---
+        let musicReady = false;
+        let userInteracted = false;
+
+        function isAudioReady() {
+            // readyState >= 3 (HAVE_FUTURE_DATA) artinya cukup data buat mulai play tanpa buffering
+            return bgMusic.readyState >= 3;
         }
 
-        // Attempt autoplay as soon as the page loads
+        function attemptPlayIfReady() {
+            if (!musicReady || !userInteracted) return; // tunggu dua-duanya siap
+            bgMusic.play().then(showPlayingIcon).catch(() => {
+                showPausedIcon();
+            });
+        }
+
+        function markMusicReady() {
+            if (musicReady) return;
+            musicReady = true;
+            attemptPlayIfReady();
+        }
+
+        if (isAudioReady()) {
+            markMusicReady();
+        } else {
+            bgMusic.addEventListener('canplaythrough', markMusicReady, { once: true });
+            // fallback jaga-jaga kalau event canplaythrough nggak fire (koneksi lambat/aneh)
+            bgMusic.addEventListener('loadeddata', () => {
+                if (isAudioReady()) markMusicReady();
+            });
+        }
+
+        function tryPlayMusic() {
+            const interactionEvents = ['click', 'touchstart', 'pointerdown', 'scroll', 'keydown'];
+
+            const startOnInteraction = () => {
+                userInteracted = true;
+                interactionEvents.forEach(evt =>
+                    document.removeEventListener(evt, startOnInteraction)
+                );
+
+                if (musicReady) {
+                    // Musik sudah selesai loading duluan -> langsung play
+                    attemptPlayIfReady();
+                } else {
+                    // Musik belum selesai loading -> kasih tau lewat icon, nanti auto-play begitu siap
+                    showPausedIcon();
+                }
+            };
+
+            interactionEvents.forEach(evt =>
+                document.addEventListener(evt, startOnInteraction, { once: true, passive: true })
+            );
+        }
+
+        // Nunggu interaksi pertama dari user (musiknya akan mulai begitu file-nya juga sudah siap)
         tryPlayMusic();
 
         // Manual toggle button
